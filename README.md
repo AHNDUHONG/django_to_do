@@ -59,9 +59,38 @@ $ ls
 manage.py*  todo_app/
 ```
 
-## 초기화면 실행
+## 초기 화면 실행
 - `my_app` 폴더에서 서버를 구동시킨다. 
+    + 접속 URL : http://127.0.0.1:8000/
 ```bash
 $ python manage.py runserver
 ```
 ![](./img/fig_01_django.png)
+
+- 이번에는 해당 서버에서 http://127.0.0.1:8000/admin을 실행시킨다. 
+![](./img/fig_02_admin.png)
+
+- DB 스키마 생성 위해 이번에는 python manage.py migrate를 실행한다. 
+
+```bash
+$ python manage.py migrate
+```
+
+## 관리자 유저 생성
+- 관리자 유저를 생성하도록 한다. 
+    + username : human
+    + password : 
+```bash
+python manage.py createsuperuser
+Username (leave blank to use 'yourname'): 
+Email address: your_email@email.com
+Password: 
+Password (again):
+```
+
+- 이제 다시 admin 페이지에 접속하고, username과 password를 입력한다. 
+    + 정상적으로 입력하면 아래와 같이 로그인이 되면 성공이다. 
+![](./img/fig_03_login.png)
+
+# 앱 실행
+- 
