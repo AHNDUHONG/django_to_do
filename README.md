@@ -39,11 +39,29 @@ $ source venv/Scripts/activate
 
 ## Installing Django
 - Django : https://www.djangoproject.com/
-- 가상환경이 접속된 상태에서 django를 설치한다. 
+- 가상환경이 접속된 상태에서 `django`와 시간 계산을 위해 `pytz`를 설치한다. 
 ```bash
-$ pip install django
+$ pip install django pytz
 ```
 
 ## my_app 폴더 생성
-- 새로운 폴더 `my_app` 하나 생성한다. 
-``
+- 새로운 폴더 `my_app` 하나 생성 후 해당 경로에 접속한다.
+```bash
+$ mkdir my_app && cd my_app
+```
+
+## djanog 개발 시작
+- 이제 `django` 프로젝트를 시작한다. 
+- `django` 설치 후, `todo_app` 폴더와 `manage.py`가 실행되는지 확인한다. 
+```bash
+$ django-admin startproject todo_app .
+$ ls
+manage.py*  todo_app/
+```
+
+## 초기화면 실행
+- `my_app` 폴더에서 서버를 구동시킨다. 
+```bash
+$ python manage.py runserver
+```
+![](./img/fig_01_django.png)
