@@ -1,1 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} To-Do List {% endblock %}
+
+{% block content %}
 <h1>Hello World! HomePage!!</h1>
+
+    {% if all_items %}
+    <table class='table table-hover'>
+        {% for things in all_items %}
+            {% if things.complted %}
+                <tr class="table-success">
+                    <td>{{ things.item }}</td>
+                    <td><center>{{ things.completed }}</center></td>
+                    <td><center>Delete</center></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ things.item }}</td>
+                    <td><center>{{ things.completed }}</center></td>
+                    <td><center>Delete</center></td>
+                </tr>
+            {% endif %}   
+        {% endfor %}
+    </table>
+    {% endif %}
+
+{% endblock %}
