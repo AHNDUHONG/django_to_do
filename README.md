@@ -499,7 +499,7 @@ def about(request):
     {% if all_items %}
     <table class='table table-hover'>
         {% for things in all_items %}
-            {% if things.complted %}
+            {% if things.completed %}
                 <tr class="table-success">
                     <td>{{ things.item }}</td>
                     <td><center>{{ things.completed }}</center></td>
@@ -632,7 +632,7 @@ STATICFILES_DIRS = [
     {% if all_items %}
     <table class='table table-hover'>
         {% for things in all_items %}
-            {% if things.complted %}
+            {% if things.completed %}
                 <tr class="table-success">
                     <td class="striker">{{ things.item }}</td>
                     <td><center>{{ things.completed }}</center></td>
