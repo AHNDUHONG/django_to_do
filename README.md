@@ -530,7 +530,7 @@ $  ls
 img/  my_app/  README.md  requirements.txt  venv/
 ```
 
-- 현재 경로에서 static 폴더를 3가지를 생성한다. 
+- my_app 폴더 내에 새로운 static 폴더를 생성하고  3가지를 생성한다. 
   + css 폴더 - my_style.css 파일을 추가로 생성한다. 
   + js 폴더
   + images 폴더
