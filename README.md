@@ -521,3 +521,133 @@ def about(request):
 
 - 결과물을 확인하도록 한다. 
 ![](./img/fig_13_db_lists_bootstrap_css.png)
+
+### (3) Static CSS Files
+- 새로운 폴더를 만들도록 한다. 
+- 우선 현재 경로를 확인한다. 
+```bash
+$  ls
+img/  my_app/  README.md  requirements.txt  venv/
+```
+
+- 현재 경로에서 static 폴더를 3가지를 생성한다. 
+  + css 폴더 - my_style.css 파일을 추가로 생성한다. 
+  + js 폴더
+  + images 폴더
+
+- 이번에는 todo_app 폴더 내 settings.py에서 아래와 같이 코드를 추가한다. 
+```python
+.
+.
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'), 
+]
+.
+.
+```
+
+- 이번에는 my_style.css 파일에서 아래 css 코드를 추가한다. 
+```css
+.striker {
+    text-decoration: line-through;
+}
+```
+
+- 이번에는 todo_list/templates 폴더에서 base.html 파일을 수정한다. 
+```html
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="{% static 'css/my_style.css' %}" rel="stylesheet">
+
+    <title>{% block title %} Hello, world! {% endblock %} </title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">To-Do List</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="To-Do Item" aria-label="Search">
+                    <button class="btn btn-outline-secondary" type="submit">일정 추가</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <br />
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
+    -->
+</body>
+
+</html>
+```
+
+- 실제 적용하기 위해서 home.html 파일을 수정한다. 
+  + td 태그에 클래스명 striker를 추가한다. 
+```html
+{% extends 'base.html' %}
+
+{% block title %} To-Do List {% endblock %}
+
+{% block content %}
+<h1>Hello World! HomePage!!</h1>
+
+    {% if all_items %}
+    <table class='table table-hover'>
+        {% for things in all_items %}
+            {% if things.complted %}
+                <tr class="table-success">
+                    <td class="striker">{{ things.item }}</td>
+                    <td><center>{{ things.completed }}</center></td>
+                    <td><center>Delete</center></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>{{ things.item }}</td>
+                    <td><center>{{ things.completed }}</center></td>
+                    <td><center>Delete</center></td>
+                </tr>
+            {% endif %}   
+        {% endfor %}
+    </table>
+    {% endif %}
+
+{% endblock %}
+```
