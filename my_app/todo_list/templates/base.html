@@ -32,8 +32,9 @@
                         <a class="nav-link" href="{% url 'about' %}">About</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="To-Do Item" aria-label="Search">
+                <form class="d-flex" method="POST">
+                    {% csrf_token %}
+                    <input class="form-control me-2" type="search" placeholder="To-Do Item" aria-label="Search", name="item">
                     <button class="btn btn-outline-secondary" type="submit">일정 추가</button>
                 </form>
             </div>

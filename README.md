@@ -651,3 +651,148 @@ STATICFILES_DIRS = [
 
 {% endblock %}
 ```
+
+- 아래와 같이 CSS가 적용되는지 확인한다. 
+![](./img/fig_14_db_table.png)
+
+### (4) Forms 파일
+- Forms 파일을 작성한다. 
+- 화면단에서 일정을 추가하면 반영하도록 작성하는 코드이다. 
+    + my_app/todo_list/forms.py
+```python
+from django import forms
+from .models import List
+
+class ListForm(forms.ModelForm):
+    class Meta:
+        model = List
+        fields = ["item", "completed"]
+```
+
+- 이번에는 base.html 파일을 수정한다. 
+    + form 태그를 아래와 같이 수정한다. 
+```html
+.
+.
+.
+              <form class="d-flex" method="POST">
+                  {% csrf_token %}
+                  <input class="form-control me-2" type="search" placeholder="To-Do Item" aria-label="Search" ,
+                      name="item">
+                  <button class="btn btn-outline-secondary" type="submit">일정 추가</button>
+              </form>
+.
+.
+.
+```
+
+- 이번에는 `views.py`을 수정한다. 
+```python
+from wsgiref.util import request_uri
+from django.shortcuts import render
+from .models import List
+from .forms import ListForm
+
+# Create your views here.
+def home(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST or None)
+        
+        if form.is_valid():
+            form.save()
+            all_items = List.objects.all
+            return render(request, 'home.html', {'all_items' : all_items})
+    else:
+        all_items = List.objects.all
+        return render(request, 'home.html', {'all_items' : all_items})
+def about(request):
+    context = {'first_name': 'Evan', 'last_name' : 'Elder'}
+    return render(request, 'about.html', context)
+```
+
+- 이제 아래 그림과 같이 새로운 일정을 추가할 수 있을 것이다. 
+![](./img/fig_15_add_new_item.png)
+
+### (5) 메시지 생성
+- 새로운 아이템이 추가가 될 때마다 메시지가 테이블 위에 생성이 되도록 작성해본다. 
+- views.py을 다시 수정해본다. 
+    + messages 코드가 추가가 된 것이다. 
+```python
+from wsgiref.util import request_uri
+from django.shortcuts import render
+from .models import List
+from .forms import ListForm
+from django.contrib import messages
+
+# Create your views here.
+def home(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST or None)
+        
+        if form.is_valid():
+            form.save()
+            all_items = List.objects.all
+            messages.success(request, ('Item Has Been Added To List!'))
+            return render(request, 'home.html', {'all_items' : all_items})
+    else:
+        all_items = List.objects.all
+        return render(request, 'home.html', {'all_items' : all_items})
+def about(request):
+    context = {'first_name': 'Evan', 'last_name' : 'Elder'}
+    return render(request, 'about.html', context)
+```
+
+- 이번에는 `home.html` 파일을 수정한다. 
+```html
+{% extends 'base.html' %}
+
+{% block title %} To-Do List {% endblock %}
+
+{% block content %}
+<h1>Hello World! HomePage!!</h1>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <button class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <small><sup></sup></small>
+    </button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if all_items %}
+<table class='table table-hover'>
+    {% for things in all_items %}
+    {% if things.completed %}
+    <tr class="table-success">
+        <td class="striker">{{ things.item }}</td>
+        <td>
+            <center>{{ things.completed }}</center>
+        </td>
+        <td>
+            <center>Delete</center>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td>{{ things.item }}</td>
+        <td>
+            <center>{{ things.completed }}</center>
+        </td>
+        <td>
+            <center>Delete</center>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
+```
+
+- 위 코드가 정상적으로 작동을 하면 아래와 같은 화면이 나타난다. 
+![](/img/fig_16_message.png)
