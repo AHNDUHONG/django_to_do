@@ -796,3 +796,269 @@ def about(request):
 
 - 위 코드가 정상적으로 작동을 하면 아래와 같은 화면이 나타난다. 
 ![](/img/fig_16_message.png)
+
+### (6) 할 일 목록 삭제
+- 이제 Delete 버튼을 활성화하여 삭제 기능이 정상적으로 작동이 되도록 한다. 
+- my_app/todo_list/urls.py을 수정한다. 
+    + 삭제 시, 경로를 지정하는 것이다. 
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'), 
+    path('about/', views.about, name='about'),
+    path('delete/<list_id>', views.delete, name='delete'),
+]
+```
+
+- 이번에는 views.py를 수정한다. 
+    + item을 삭제 한 후, 메시지 생성 및 home으로 redirect를 진행한다. 
+    + 기존 코드에서 주어진 다음 코드를 추가한다. 
+```python
+from wsgiref.util import request_uri
+from django.shortcuts import redirect, render, redirect
+.
+.
+.
+from django.http import HttpResponseRedirect
+
+# Create your views here.
+.
+.
+.
+
+def delete(request, list_id):
+    item = List.objects.get(pk=list_id)
+    item.delete()
+    messages.success(request, ('Item has been deleted!'))
+    return redirect('home')
+```
+
+- 이번에는 home.html 코드를 수정한다. 
+```html
+{% extends 'base.html' %}
+
+{% block title %} To-Do List {% endblock %}
+
+{% block content %}
+<h1>Hello World! HomePage!!</h1>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <button class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+        <small><sup></sup></small>
+    </button>
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+
+{% if all_items %}
+<table class='table table-hover'>
+    {% for things in all_items %}
+    {% if things.completed %}
+    <tr class="table-success">
+        <td class="striker">{{ things.item }}</td>
+        <td>
+            <center>{{ things.completed }}</center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td>{{ things.item }}</td>
+        <td>
+            <center>{{ things.completed }}</center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}
+```
+
+- 실제로 삭제가 진행되는지 확인한다. 
+
+### (7) Cross and Uncross Items
+- 현재 화면단에 true or false로 되어 있는데, 이 부분은 Uncross와 Cross Off로 정의한다. 
+- 우선 urls.py를 수정한다. 
+```python
+"""todo_app URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/4.0/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'), 
+    path('about/', views.about, name='about'),
+    path('delete/<list_id>', views.delete, name='delete'),
+    path('cross_off/<list_id>', views.cross_off, name='cross_off'),
+    path('uncross/<list_id>', views.uncross, name='uncross'),
+]
+```
+
+- 이번에는 views.py에서 두개의 함수 cross_off()와 uncross()를 추가한다. 
+```python
+.
+.
+.
+def cross_off(request, list_id):
+    item = List.objects.get(pk=list_id)
+    item.completed = True
+    item.save()
+    return redirect('home')
+
+def uncross(request, list_id):
+    item = List.objects.get(pk=list_id)
+    item.completed = False
+    item.save()
+    return redirect('home')
+```
+
+- 이번에는 home.html 파일을 수정한다. 
+```python
+.
+.
+.
+<tr class="table-success">
+        <td class="striker">{{ things.item }}</td>
+        <td>
+            <center><a href="{% url 'uncross' things.id %}">Uncross</a></center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td>{{ things.item }}</td>
+        <td>
+            <center><a href="{% url 'cross_off' things.id %}">Cross Off</a></center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+.
+.
+.
+```
+
+- 정상적으로 실행을 결과는 아래와 같이 나올 것이다. 
+![](./img/fig_17_cross_uncross.png)
+
+
+### (8) 할 일 목록 수정
+- Item을 클릭하면 수정페이지로 넘어가서 처리하는 작업을 진행하도록 한다. 
+
+- 먼저 urls.py를 수정한다. 
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'), 
+    path('about/', views.about, name='about'),
+    path('delete/<list_id>', views.delete, name='delete'),
+    path('cross_off/<list_id>', views.cross_off, name='cross_off'),
+    path('uncross/<list_id>', views.uncross, name='uncross'),
+    path('edit/<list_id>', views.edit, name='edit'),
+]
+```
+
+- 이번에는 views.py에서 edit()함수를 추가한다. 
+```python
+.
+.
+.
+def edit(request, list_id):
+    if request.method == 'POST':
+        item = List.objects.get(pk=list_id)
+
+        form = ListForm(request.POST or None, instance=item)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, ('Item has been Edited'))
+            return redirect('home')
+    else:
+        item = List.objects.get(pk=list_id)
+        return render(request, 'edit.html', {'item' : item})
+
+```
+
+- 이번에는 home.html 파일을 수정한다. 
+```html
+.
+.
+.
+<tr class="table-success">
+        <td class="striker"><a href="{% url 'edit' things.id %}">{{ things.item }}</a></td>
+        <td>
+            <center><a href="{% url 'uncross' things.id %}">Uncross</a></center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td><a href="{% url 'edit' things.id %}">{{ things.item }}</a></td>
+        <td>
+            <center><a href="{% url 'cross_off' things.id %}">Cross Off</a></center>
+        </td>
+        <td>
+            <center><a href="{% url 'delete' things.id %}">Delete</a></center>
+        </td>
+    </tr>
+.
+.
+.
+```
+
+- 이번에는 edit.html 파일을 생성한다. 
+```html
+{% extends 'base.html' %}
+
+{% block title %} To-Do List | Edit Item {% endblock %}
+
+{% block content %}
+
+    {% if item %}
+    <form class="d-flex" method="POST">
+        {% csrf_token %}
+        <input class="form-control me-2" type="search" placeholder="{{ item.item }}" aria-label="Search", value = "{{ item.item }}" name="item">
+
+        <input type="hidden" value = "{{ item.completed }}" name="completed">
+
+        <button class="btn btn-outline-secondary" type="submit">Edit Item</button>
+    </form>
+
+    {% endif %}
+{% endblock %}
+```
+
+- home.html 파일에서 item을 클릭하면 수정 페이지를 확인할 수 있다. 
