@@ -7,12 +7,12 @@
     + Python : https://www.python.org/
 
 # 가상환경 설치
-- 파이썬 설치가 끝났다면, 해당 깃허브를 다운로드 받는다.  
+- 파이썬 설치가 끝났다면, 개인 Repo를 생성 한 후, 깃허브를 다운로드 받는다.  
 ```bash 
 $ git clone https://github.com/dschloe/django_to_do.git
 ```
 
-- django_to_do 폴더에 진입 후 아래와 같이 실행한다. 
+- django_to_do(예시) 폴더에 진입 후 아래와 같이 실행한다. 
 ```bash
 $ cd django_to_do
 $ virtualenv venv
@@ -44,12 +44,6 @@ $ source venv/Scripts/activate
 $ pip install django pytz
 ```
 
-## my_app 폴더 생성
-- 새로운 폴더 `my_app` 하나 생성 후 해당 경로에 접속한다.
-```bash
-$ mkdir my_app && cd my_app
-```
-
 ## djanog 개발 시작
 - 이제 `django` 프로젝트를 시작한다. 
 - `django` 설치 후, `todo_app` 폴더와 `manage.py`가 실행되는지 확인한다. 
@@ -60,7 +54,7 @@ manage.py*  todo_app/
 ```
 
 ## 초기 화면 실행
-- `my_app` 폴더에서 서버를 구동시킨다. 
+- 서버를 구동시킨다. 
     + 접속 URL : http://127.0.0.1:8000/
 ```bash
 $ python manage.py runserver
@@ -379,7 +373,7 @@ def about(request):
 ### (1) 데이터베이스 정의
 - models.py에서 아래와 같이 클래스를 생성한다. 
   + 참조 : https://www.webforefront.com/django/modeldatatypesandvalidation.html
-  + 파일경로 : my_app/todo_list/models.py
+  + 파일경로 : todo_list/models.py
 ```py
 from pyexpat import model
 from django.db import models
@@ -409,7 +403,7 @@ Running migrations:
 
 ### (2) 데이터베이스 Admin
 - 이번엔 admin.py에서 admin site에 등록하는 예제를 작성한다. 
-- 파일경로 : my_app/todo_list/admin.py
+- 파일경로 : todo_list/admin.py
 
 ```python
 from django.contrib import admin
@@ -527,10 +521,10 @@ def about(request):
 - 우선 현재 경로를 확인한다. 
 ```bash
 $  ls
-img/  my_app/  README.md  requirements.txt  venv/
+img/  README.md  requirements.txt  venv/
 ```
 
-- my_app 폴더 내에 새로운 static 폴더를 생성하고  3가지를 생성한다. 
+- 프로젝트 폴더 내에 새로운 static 폴더를 생성하고  3가지를 생성한다. 
   + css 폴더 - my_style.css 파일을 추가로 생성한다. 
   + js 폴더
   + images 폴더
@@ -799,7 +793,7 @@ def about(request):
 
 ### (6) 할 일 목록 삭제
 - 이제 Delete 버튼을 활성화하여 삭제 기능이 정상적으로 작동이 되도록 한다. 
-- my_app/todo_list/urls.py을 수정한다. 
+- todo_list/urls.py을 수정한다. 
     + 삭제 시, 경로를 지정하는 것이다. 
 ```python
 from django.urls import path
@@ -1062,3 +1056,38 @@ def edit(request, list_id):
 ```
 
 - home.html 파일에서 item을 클릭하면 수정 페이지를 확인할 수 있다. 
+
+# 최종 폴더 경로
+```
+$ tree -L 2
+.
+|-- README.md
+|-- db.sqlite3
+|-- manage.py
+|-- requirements.txt
+|-- static
+|   `-- css
+|-- todo_app
+|   |-- __init__.py
+|   |-- __pycache__
+|   |-- asgi.py
+|   |-- settings.py
+|   |-- urls.py
+|   `-- wsgi.py
+|-- todo_list
+|   |-- __init__.py
+|   |-- __pycache__
+|   |-- admin.py
+|   |-- apps.py
+|   |-- forms.py
+|   |-- migrations
+|   |-- models.py
+|   |-- templates
+|   |-- tests.py
+|   |-- urls.py
+|   `-- views.py
+`-- venv
+    |-- Lib
+    |-- Scripts
+    `-- pyvenv.cfg
+```
